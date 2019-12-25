@@ -1,60 +1,35 @@
 "use strict";
 
 const
-    Log = require('@dazn/lambda-powertools-logger');
+  Log = require('@dazn/lambda-powertools-logger');
 
 const
-    { provider } = require("./lib/provider"),
-    { ok, extractUsers } = require("./lib/utils"),
-    { users, accessKeyAnalyze, deactivateKey, deleteKey } = require("./lib/iam"),
-    config = require("./lib/config");
+  { provider } = require('./lib/provider'),
+  { Logs } = require('./lib/cws'),
+  config = require('./lib/config'),
+  { ok, extractUsers } = require('./lib/utils'),
+  LIMIT = 5;
+
 
 const handler = async (event, ctx) => {
-    Log.debug(`Event: ${JSON.stringify(event)}`);
-    let userData = await users(provider, {});
-    let extractedUsers = extractUsers(userData);
-    Log.info(`Users under review: ${extractedUsers}`);
-    let deactivateSecrets = [];
-    let deleteSecrets = [];
-    for (let username of extractedUsers) {
-        var params = {
-            MaxItems: 5,
-            UserName: username
-        };
-        let keys = await accessKeyAnalyze(provider, params);
-        keys.forEach(e => {
-            if (e.status === 'Active' && e.createDate >= config.deactivateHours) {
-                deactivateSecrets.push(e);
-            }
-            if (e.status === 'Inactive' && e.createDate >= config.deleteHours) {
-                deleteSecrets.push(e);
-            }
-        });
+  Log.debug(`Event: ${JSON.stringify(event)}`);
+  let logs = new Logs(provider, LIMIT);
+  let logGroups = await logs.fetchAllLogGroups();
+  Log.info(`LogGroups: found ${logGroups.length}`);
+  for (let group of logGroups) {
+    let { logGroupName } = group;
+    Log.debug(`LogGroup: analyze '${name}'`);
+    let logStreams = await logs.fetchLogStreams(logGroupName);
+    Log.debug(`LogStreams: found ${logStreams.length}`);
+    for (let r in logStreams) {
+      let { logStreamName } = logStreams[r]
+      await deleteLogStream(logGroupName, logStreamName);
     }
-
-    for (let el of deactivateSecrets) {
-        Log.info(`deactivate key: ${JSON.stringify(el)}`);
-        await deactivateKey(provider, {
-            AccessKeyId: el.accessKeyId,
-            Status: 'Inactive',
-            UserName: el.userName
-        });
-    }
-
-    for (let el of deleteSecrets) {
-        Log.info(`delete key: ${JSON.stringify(el)}. Delete ${config.delete}`);
-        if (config.delete) {
-            await deleteKey(provider, {
-                AccessKeyId: el.accessKeyId,
-                UserName: el.userName
-            });
-        }
-    }
-
-    Log.info(`IAM secretes managed`);
-    return ok(`OK`);
+  }
+  Log.info(`fetched and analyzed`);
+  return ok(`OK`);
 };
 
 module.exports = {
-    handler
+  handler
 };

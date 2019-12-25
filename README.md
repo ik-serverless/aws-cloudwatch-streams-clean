@@ -1,6 +1,3 @@
-# aws-managing-access-keys
+# aws-cloudwatch-streams-clean
 
-AWS IAM managing Access Keys
-
-The function iterate over all the users and retrieve all the AWS Access Keys metadata.
-It will check whether a key should be deleted or deactivated.
+A small lambda to streamline some of the cleanup operations required when when working with AWS CloudWatch Log Stream, and especially when working with the old streams that costs us money.
