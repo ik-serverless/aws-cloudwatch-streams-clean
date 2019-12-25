@@ -5,7 +5,7 @@ const
   { provider } = require('./lib/provider'),
   { Logs } = require('./lib/cws'),
   config = require('./lib/config'),
-  { ok, extractUsers } = require('./lib/utils');
+  { ok } = require('./lib/utils');
 
 
 const handler = async (event, ctx) => {
@@ -15,13 +15,13 @@ const handler = async (event, ctx) => {
   Log.info(`LogGroups: found ${logGroups.length}`);
   for (let group of logGroups) {
     let { logGroupName } = group;
-    Log.debug(`LogGroup: analyze '${name}'`);
+    Log.debug(`LogGroup: analyze '${logGroupName}'`);
     let logStreams = await logs.fetchLogStreams(logGroupName);
     Log.debug(`LogStreams: found ${logStreams.length}`);
     if (config.delete) {
       for (let r in logStreams) {
         let { logStreamName } = logStreams[r];
-        await deleteLogStream(logGroupName, logStreamName);
+        await logs.deleteLogStream(logGroupName, logStreamName);
       }
     }
   }
