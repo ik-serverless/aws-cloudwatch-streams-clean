@@ -19,11 +19,11 @@
     },
     "keywords": [
         "aws",
-        "iam",
-        "access-key",
-        "secrets",
+        "cloudwatch",
+        "streams",
+        "clean",
         "manage",
-        "security"
+        "costing"
     ],
     "author": "Ivan Katliarchuk",
     "license": "MIT",
@@ -42,7 +42,6 @@
     },
     "dependencies": {
         "@dazn/lambda-powertools-logger": "^1.9.0",
-        "cloudwatch-logs-janitor": "^0.2.1",
         "env-var": "^5.0.0"
     }
 }

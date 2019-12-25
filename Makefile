@@ -20,5 +20,7 @@ release: ## Create release version
 	@semtag final -s minor
 
 run: ## Run locally
-	# @node iam_listusers.js
 	@npm run local
+
+package: ## Package Function
+	@npm run package
