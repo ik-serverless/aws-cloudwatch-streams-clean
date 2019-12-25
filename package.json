@@ -1,5 +1,5 @@
 {
-    "name": "aws-managing-log-streams",
+    "name": "aws-cloudwatch-streams-clean",
     "version": "1.0.0",
     "description": "Manage AWS cloudwatch log streams",
     "main": "index.js",
@@ -11,11 +11,11 @@
         "build:devinstall": "npm install --production",
         "build:zip": "zip -X -r artifact.zip * -x 'package.json' -x 'test/*' -x '__tests__/*' -x 'package-lock.json' -x '*.md' -x '**/__tests__/*' -x '**/test/*' -x Makefile -x LICENSE -x 'examples/' -x jest.config.js",
         "clean": "rm -f artifact.zip && rm -rf node_modules",
-        "package": "npm run clean && npm run build:install && npm run build:zip"
+        "package": "npm run clean && npm run build:install && npm run build:zip && mv artifact.zip aws-cloudwatch-streams-clean.zip"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/ik-serverless/aws-managing-log-streams.git"
+        "url": "git+https://github.com/ik-serverless/aws-cloudwatch-streams-clean.git"
     },
     "keywords": [
         "aws",
